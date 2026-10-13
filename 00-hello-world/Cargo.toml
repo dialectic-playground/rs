@@ -1,0 +1,22 @@
+[package]
+name = "dp-hello"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.85"
+description = "dp-hello: print a greeting to standard output (dialectic-playground project 00)"
+license = "MIT"
+publish = false
+
+[lib]
+name = "dp_hello"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dp-hello"
+path = "src/main.rs"
+
+[dependencies]
+
+[profile.release]
+codegen-units = 1
+lto = true

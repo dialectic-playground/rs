@@ -16,7 +16,7 @@ This repository implements the eleven projects of the
 specified to the byte by the curriculum and verified by its black-box tests on Linux, macOS,
 and Windows.
 
-**Status:** repository and toolchain ready; no projects implemented yet.
+**Status:** Implemented projects: 00-hello-world.
 
 ## Rust at a glance
 
@@ -35,9 +35,20 @@ and Windows.
 | Release line | Rust 1.99 |
 | Build / package tool | cargo |
 | Container image | `rust:1.99-slim-trixie`, pinned by digest ([`Containerfile`](Containerfile)) |
-| Native CI | rustup (preinstalled): rustup toolchain install 1.99 |
+| Native CI | rustup (preinstalled): rustup toolchain install 1.99, plus the clippy and rustfmt components |
+| Unit tests | `cargo test` (built-in test harness; tests sit next to the code in `#[cfg(test)]` modules) |
+| Lint | `cargo clippy --all-targets -- -D warnings` and `cargo fmt --check` |
+| Format | `cargo fmt` |
+| Dependencies | One cargo package per project (`Cargo.toml` + committed `Cargo.lock`); builds use `--locked` |
 
-`make toolchain` verifies that the container and native toolchains are on this release line.
+`make toolchain` verifies that the container and native toolchains are on this release line,
+and that clippy and rustfmt are installed. The container image adds them with
+`rustup component add clippy rustfmt`; natively, run
+`rustup component add clippy rustfmt --toolchain 1.99`.
+
+Each project's `make all` builds a release executable into `<project>/target/release`
+(`BIN_DIR`); `make install` copies it to `$(BINDIR)` (default `~/.local/bin`), and
+`make distclean` removes the whole `target/` directory.
 
 ## Layout
 

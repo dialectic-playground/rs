@@ -13,7 +13,7 @@
 
 # Project directories whose implementation is complete enough to build and test, in
 # curriculum order (for example: 00-hello-world 01-echo). CI covers exactly these.
-IMPLEMENTED :=
+IMPLEMENTED := 00-hello-world
 
 DP_HOST_GOALS += help roundtrip
 include tools/container.mk
@@ -56,6 +56,8 @@ toolchain:
 	@version="$$(rustc --version)"; echo "$$version"; echo "$$version" | grep -q '^rustc 1\.99\.' \
 		|| { echo 'toolchain: expected a version matching ^rustc 1\.99\.' >&2; exit 1; }
 	cargo --version
+	cargo clippy --version
+	cargo fmt --version
 
 projects:
 	@[ -n "$(strip $(IMPLEMENTED))" ] || echo "projects: none implemented yet (IMPLEMENTED is empty)"
