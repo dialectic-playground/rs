@@ -54,7 +54,7 @@ toolchain:
 	python3 --version || python --version
 	make --version | head -1
 	@version="$$(rustc --version)"; echo "$$version"; echo "$$version" | grep -q '^rustc 1\.99\.' \
-		|| { echo "toolchain: expected a version matching ^rustc 1\.99\." >&2; exit 1; }
+		|| { echo 'toolchain: expected a version matching ^rustc 1\.99\.' >&2; exit 1; }
 	cargo --version
 
 projects:
