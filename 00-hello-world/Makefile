@@ -21,17 +21,30 @@ TOOLS   := dp-hello
 # Path to the sdlc-curriculum checkout (the specs, test suites, and runner live there).
 CURRICULUM_ROOT ?= ../sdlc-curriculum
 
-# Directory that contains the built executables after `make all`, e.g. build/bin.
-BIN_DIR :=
+# Rust (cargo): Cargo.toml and Cargo.lock live here; sources and unit tests under src/.
+# Cargo's target directory is pinned to ./target so BIN_DIR is stable whatever the user's
+# CARGO_TARGET_DIR or build.target-dir says.
+CARGO        ?= cargo
+TARGET_DIR   := target
+CARGO_FLAGS  := --locked --target-dir $(TARGET_DIR)
+
+# Directory that contains the built executables after `make all`.
+BIN_DIR := $(TARGET_DIR)/release
 
 # Language-specific commands. Use $(TOOLS), $(EXE), $(PREFIX), and $(BINDIR) as needed.
-DP_BUILD     =
-DP_INSTALL   =
-DP_UNINSTALL =
-DP_UNIT_TEST =
-DP_LINT      =
-DP_FORMAT    =
-DP_CLEAN     =
-DP_DISTCLEAN =
+DP_BUILD     = $(CARGO) build --release $(CARGO_FLAGS)
+define DP_INSTALL
+mkdir -p "$(BINDIR)"
+cp "$(BIN_DIR)/$(TOOLS)$(EXE)" "$(BINDIR)/$(TOOLS)$(EXE)"
+endef
+DP_UNINSTALL = rm -f "$(BINDIR)/$(TOOLS)$(EXE)"
+DP_UNIT_TEST = $(CARGO) test $(CARGO_FLAGS)
+define DP_LINT
+$(CARGO) fmt --check
+$(CARGO) clippy --all-targets $(CARGO_FLAGS) -- -D warnings
+endef
+DP_FORMAT    = $(CARGO) fmt
+DP_CLEAN     = $(CARGO) clean --target-dir $(TARGET_DIR)
+DP_DISTCLEAN = rm -rf $(TARGET_DIR)
 
 include $(CURRICULUM_ROOT)/shared/templates/BASE-MAKEFILE
